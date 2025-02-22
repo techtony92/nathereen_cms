@@ -2,10 +2,14 @@
  * For a detailed explanation regarding each configuration property, visit:
  * https://jestjs.io/docs/configuration
  */
+// jest.config.ts
+import { createDefaultPreset, JestConfigWithTsJest } from 'ts-jest'
+
 
 import type {Config} from 'jest';
 
-const config: Config = {
+const JestConfig: JestConfigWithTsJest = {
+
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -194,6 +198,7 @@ const config: Config = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+  ...createDefaultPreset(),
 };
 
-export default config;
+export default JestConfig;
