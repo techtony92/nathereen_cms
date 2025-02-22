@@ -1,0 +1,7 @@
+{
+    "verbose":true,
+    "ignore":["node-modules"],
+    "watch":["tsconfig.json", "package.json", "server.ts"],
+    "ext":"ts",
+    "exec":"tsx server.ts"
+}
