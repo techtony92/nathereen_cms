@@ -53,10 +53,12 @@ const configuration:Config =  tseslint.config(
             'jest/prefer-to-have-length': 'warn',
             'jest/valid-expect': 'error',
             "prettier/prettier":[
-                "error",
+                "off",
                 {
                     "tabWidth":4,
                     "tabs":true,
+                    "bracketSpacing": false ,
+                    
                     
                 }
             ]
