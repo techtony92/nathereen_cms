@@ -46,20 +46,30 @@ const configuration:Config =  tseslint.config(
         rules:{
             '@typescript-eslint/no-explicit-any': ['warn', { ignoreRestArgs: true }],
             "@no-undef":'off',
+           
+            "@typescript-eslint/array-type":["error", {
+                default:"generic",
+                readonly:"generic",
+            }],
             /* Jest rules*/
             'jest/no-disabled-tests': 'warn',
             'jest/no-focused-tests': 'error',
             'jest/no-identical-title': 'error',
             'jest/prefer-to-have-length': 'warn',
             'jest/valid-expect': 'error',
+
+            /* Prettier */
             "prettier/prettier":[
-                "error",
+                "off",
                 {
                     "tabWidth":4,
                     "tabs":true,
+                    "bracketSpacing": false ,
+                    
                     
                 }
             ]
+            
         },
     }
 );
