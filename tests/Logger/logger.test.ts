@@ -1,61 +1,59 @@
-import {describe, it, expect} from "@jest/globals";
-import AuditTrail from "../../tools/logger";
-import { readFile } from "fs";
+import {describe, test, expect} from "@jest/globals";
+import AuditTrail from "../../tools/Auditor";
+import { readFile, existsSync } from "node:fs";
+import { Status } from "../../tools/queue";
 
-   
-describe(`Logger Creation`, ()=>{
-    const errorLog = "error.txt";
-    const statusLog = "system.txt";
-    const logDir = `${process.cwd()}/logs`;
-    const outputTest = `Testing Log Writer`;
-    const errorOutputTest = `Error Log Test`;
+
+describe("Auditor Operations", ()=>{
     const auditor = new AuditTrail();
-    auditor.createAuditor("INFO", true, logDir, statusLog,`logger.test.ts`);
-    it(`Should create a logger with level:info`,() =>{
-       expect(auditor.getProperties()).toHaveProperty("level","INFO");
-       
+    const auditDirectory = `${process.cwd()}/log`;
+    const auditFile = "system.log";
+    auditor.createAuditor("INFO", true, auditDirectory, auditFile);
+    
+    test("Should create a directory", ()=>{
+        auditor.log("Audit Directory Test", __filename);
+
+        expect(existsSync(auditDirectory)).toBe(true)
     })
 
-    it(`should create an Error log with level:error`, ()=>{
-        const errorAuditor = new AuditTrail("ERROR");
-        auditor.createAuditor("ERROR", true, logDir, errorLog,`logger.test.ts`);
-        expect(errorAuditor.getProperties()).toHaveProperty("level","ERROR");
-        expect(errorAuditor.getProperties()).toMatchObject({level:"ERROR"});
+    test("Should write message to a logFile", ()=>{
+        const auditorMessage = "Audit Message \n";
+        auditor.log(auditorMessage,__filename, (operationResult:Status)=>{
+            expect(operationResult.status).toBe("success");
+            expect(auditor.getProperties().messageQueue).toHaveLength(0);
+        });
+    })
+    test("Should Log a message with status DEBUG", ()=>{
+        const auditorMessage = "Audit Message: DEBUG \n";
+        auditor.DEBUG(auditorMessage, __filename, (operationResult:Status)=>{
+            expect(operationResult.status).toBe("success");
+            expect(auditor.getProperties().level).toBe("DEBUG");
+            expect(auditor.getProperties().messageQueue).toHaveLength(0);
+        });
+    })
+    test("Should Log a message with status INFO", ()=>{
+        const auditorMessage = "Audit Message: INFO \n";
+        auditor.INFO(auditorMessage, __filename, (operationResult:Status)=>{
+            expect(operationResult.status).toBe("success");
+            expect(auditor.getProperties().level).toBe("INFO");
+            expect(auditor.getProperties().messageQueue).toHaveLength(0);
+        });
+    })
+    test("Should Log a message with status WARN", ()=>{
+        const auditorMessage = "Audit Message: WARN \n";
+        auditor.WARN(auditorMessage, __filename, (operationResult:Status)=>{
+            expect(operationResult.status).toBe("success");
+            expect(auditor.getProperties().level).toBe("WARN");
+            expect(auditor.getProperties().messageQueue).toHaveLength(0);
+        });
+    })
+    test("Should Log a message with status ERROR", ()=>{
+        const auditorMessage = "Audit Message: ERROR \n";
+        auditor.ERROR(auditorMessage, __filename, (operationResult:Status)=>{
+            expect(operationResult.status).toBe("success");
+            expect(auditor.getProperties().level).toBe("ERROR");
+            expect(auditor.getProperties().messageQueue).toHaveLength(0);
+        });
     })
 })
 
-describe(`Writing Events to Logs`, ()=>{
-   
-    const statusLog = "system.txt";
-    const logDir = `${process.cwd()}/logs`;
-    const auditor = new AuditTrail();
-    auditor.createAuditor("INFO", true, logDir, statusLog, `logger.test.ts`);
-    auditor.log("Testing logWriter");
-    const outputTest = `${auditor.getLevel()} : ${auditor.getScope()} : ${auditor.getTime()} \n Testing logWriter \n`;
-    it(`Should Write Standard Logs To Status output`, () =>{
-        readFile(`${logDir}/${statusLog}`, 'utf-8',(error, data) =>{
-        if(error) throw new Error(error.message);
-        expect(data).toBe("abc");
-        
-        })
-    })
-})
-
-
-// describe(`Appends new logs to file`, () =>{
-//     const statusLog = "system.txt";
-//     const logDir = `${process.cwd()}/logs/`;
-//     const auditor = new AuditTrail();
-//     auditor.createAuditor("INFO", true, logDir, statusLog, `logger.test.ts`);
-//     auditor.log("Testing appending");
-//     const outputTest = `${auditor.getLevel()} : ${auditor.getScope()} : ${auditor.getTime()} \n Testing logWriter \n ${auditor.getLevel()} : ${auditor.getScope()} : ${auditor.getTime()} \n Testing appending \n`;
-//     it("Should keep old content and write new content on the next line ", (done) =>{
-//         readFile(`${logDir}/${statusLog}`, 'utf-8',(error, data) =>{
-//             if(error) throw new Error(error.message);
-//             expect(data).toBe("abc");
-//             done();
-            
-//         });
-        
-//     })
-// })
